@@ -15,6 +15,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 1. 兼容Spring Cache @Cacheable，@CachePut，@CacheEvict注解
 2. 支持关联缓存更新
 3. 支持缓存自动过期
+4. 支持Spring Expression
 
 ## 用法
 
