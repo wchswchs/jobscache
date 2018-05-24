@@ -9,6 +9,7 @@ import java.lang.annotation.*;
 @Inherited
 @Documented
 public @interface JobsCachePut {
+
     @AliasFor("cacheNames")
     String[] value() default {};
 
