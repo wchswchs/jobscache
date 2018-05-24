@@ -1,4 +1,4 @@
-# cache_man
+# JobsCache
 Cache框架（支持关联Cache更新）
 
 例如：
