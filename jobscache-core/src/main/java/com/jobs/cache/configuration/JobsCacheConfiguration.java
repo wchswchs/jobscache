@@ -1,9 +1,9 @@
 package com.jobs.cache.configuration;
 
 import com.jobs.cache.JobsAnnotationCacheOperationSource;
-import com.jobs.cache.JobsCacheResolver;
 import com.jobs.cache.JobsCacheAnnotationParser;
 import com.jobs.cache.JobsCacheInterceptor;
+import com.jobs.cache.JobsCacheResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
