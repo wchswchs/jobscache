@@ -17,7 +17,12 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 3. 支持缓存自动过期
 
 ## 用法
+
 1. cache配置文件说明：
+* cacheName: 全局cache名，对应redis一级目录
+* maxEvictThreadNum: 删除缓存最大线程数，即最多开启多少个线程批量删除关联key
+* batchEvictThreadPoolSize: 删除缓存线程池大小
+* defaultExpiredTime: 默认过期时间
 
 2. 使用示例
 
@@ -31,7 +36,6 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return methodShow;
     }
 
-    @Override
     @JobsCacheEvict(domain = "'show'", key = "'show_detail_'+#id")
     public Object updateShowForRecommend(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
@@ -41,7 +45,6 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return id;
     }
 
-    @Override
     @JobsCacheable(domain = "'show'", key = "'recommend_shows'", expireTime = 5000L)
     public Object getRecommandShows(String id, String name) {
         List<ShowInfo> list = new ArrayList<ShowInfo>();
@@ -52,7 +55,6 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return list;
     }
 
-    @Override
     @JobsCacheable(key = "'order_detail_'+#id")
     public Object getCacheableShowInfoForRecByAnnotation(String id) {
         ShowInfo methodShow = new ShowInfo();
@@ -61,7 +63,6 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return methodShow;
     }
 
-    @Override
     @JobsCacheable(key = "'recommend_orders'")
     public Object getCacheableRecommandShows(String id, String name) {
         List<ShowInfo> list = new ArrayList<ShowInfo>();//getCacheableRecommandShows
@@ -72,7 +73,6 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return list;
     }
 
-    @Override
     @JobsCacheEvict(key = "'order_detail_'+#id")
     public Object getCacheableUpdateShowForRecommend(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
@@ -80,8 +80,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         methodShow.setName(name);
         return id;
     }
-
-    @Override
+    
     @JobsCachePut(key = "'seller_detail_'+#id")
     public Object getsCachePutGetShowInfoForRecByAnnotation(String var1) {
         ShowInfo methodShow = new ShowInfo();
