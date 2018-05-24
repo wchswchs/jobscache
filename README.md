@@ -18,7 +18,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 
 ## 用法
 
-### cache配置文件说明 ###
+### cache配置项说明 ###
 * cacheName: 全局cache名，对应redis一级目录
 * maxEvictThreadNum: 删除缓存最大线程数，即最多开启多少个线程批量删除关联key
 * batchEvictThreadPoolSize: 删除缓存线程池大小
