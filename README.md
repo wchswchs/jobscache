@@ -22,7 +22,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 2. 使用示例
 
 ```java
-@JobsCacheable(domain = "'show'", key = "'show_detail_'+#id")
+    @JobsCacheable(domain = "'show'", key = "'show_detail_'+#id")
     public Object getShowInfoForRec(String id) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
