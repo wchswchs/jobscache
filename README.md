@@ -26,7 +26,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 ```java
 <dependency>
   <groupId>com.jobs.cache</groupId>
-  <artifactId>jobscache</artifactId>
+  <artifactId>jobscache-core</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
