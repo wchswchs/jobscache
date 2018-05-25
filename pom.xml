@@ -145,5 +145,6 @@
     <modules>
         <module>jobscache-core</module>
         <module>jobscache-test</module>
+        <module>jobscache-starter</module>
     </modules>
 </project>
