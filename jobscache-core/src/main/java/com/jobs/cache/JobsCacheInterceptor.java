@@ -885,7 +885,7 @@ public class JobsCacheInterceptor extends CacheInterceptor {
                     int keyNum = Iterators.size(c);
                     if (keyNum > 0) {
                         int keyCount, threadCount = 0;
-                        ThreadPoolExecutor evictExecutor = new ThreadPoolExecutor(1, cacheProperties.getBatchEvictThreadPoolSize(), 0L,
+                        ThreadPoolExecutor evictExecutor = new ThreadPoolExecutor(5, cacheProperties.getBatchEvictThreadPoolSize(), 0L,
                                                                 TimeUnit.SECONDS, new SynchronousQueue<>(),
                                                                 (new ThreadFactoryBuilder()).setNameFormat("evict-thead-%d").build());
                         if (keyNum >= cacheProperties.getMaxEvictThreadNum()) {

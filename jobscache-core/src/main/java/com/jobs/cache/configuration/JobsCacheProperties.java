@@ -7,7 +7,7 @@ public class JobsCacheProperties {
 
     private String cacheName = "all";
     private int maxEvictThreadNum = 500;
-    private int batchEvictThreadPoolSize = Runtime.getRuntime().availableProcessors() * 2 + 1;
+    private int batchEvictThreadPoolSize = Integer.MAX_VALUE;
     private long defaultExpiredTime = 300;
 
     public void setCacheName(String cacheName) {
