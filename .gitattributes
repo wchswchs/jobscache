@@ -12,3 +12,5 @@
 
 # Known binary files
 *.jar binary
+
+*.java linguist-language=Java
