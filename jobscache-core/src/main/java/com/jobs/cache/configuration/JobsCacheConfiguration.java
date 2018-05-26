@@ -5,6 +5,8 @@ import com.jobs.cache.JobsCacheAnnotationParser;
 import com.jobs.cache.JobsCacheInterceptor;
 import com.jobs.cache.JobsCacheResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
+import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
@@ -19,6 +21,7 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
+@AutoConfigureAfter(CacheAutoConfiguration.class)
 @EnableConfigurationProperties(JobsCacheProperties.class)
 public class JobsCacheConfiguration {
 
