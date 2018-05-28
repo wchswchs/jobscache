@@ -49,7 +49,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return methodShow;
     }
 
-    @JobsCacheEvict(domain = "'show'", key = "'show_detail_'+#id")
+    @JobsCacheEvict(domain = "'show'")
     public Object updateShowForRecommend(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
