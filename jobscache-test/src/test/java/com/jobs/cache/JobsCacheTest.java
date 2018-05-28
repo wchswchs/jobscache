@@ -52,7 +52,7 @@ public class JobsCacheTest {
     public void testUpdateShowForRecByAnnotation() throws Exception {
         Object id = cacheService.updateShowForRecommend("20180510", "王五");
         Cache cache = cacheManager.getCache(cacheProperties.getCacheName());
-        Thread.sleep(8000);
+        Thread.sleep(10000);
         Assert.assertNull(cache.get("show:show_detail_20180510"));
     }
 

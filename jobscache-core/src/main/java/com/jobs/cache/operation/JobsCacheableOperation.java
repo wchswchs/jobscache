@@ -25,20 +25,23 @@ public class JobsCacheableOperation extends JobsCacheOperation {
 
     @Override
     public String getKey() {
+        String key = "";
+
+        if (!this.domain.isEmpty()) {
+            key += this.domain;
+        }
+        if (!this.domainKey.isEmpty()) {
+            key += ".concat(':').concat(" + this.domainKey + ")";
+        }
         if (!this.key.isEmpty()) {
-            if (!this.domainKey.isEmpty()) {
-                if (!this.domain.isEmpty()) {
-                    return this.domain + ".concat(':').concat(" + this.domainKey + ").concat(':')" + ".concat(" + this.key + ")";
-                } else {
-                    return this.domainKey + ".concat(':')" + ".concat(" + this.key + ")";
-                }
-            } else if (!this.domain.isEmpty()) {
-                return this.domain + ".concat(':')" + ".concat(" + this.key + ")";
+            if (!key.isEmpty()) {
+                key += ".concat(':').concat(" + this.key + ")";
             } else {
-                return this.key;
+                key += this.key;
             }
         }
-        return null;
+
+        return key;
     }
 
     public String getUnless() {

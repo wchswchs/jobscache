@@ -24,7 +24,7 @@ public class AnnotatedInnerShowCacheService implements CacheService<Object> {
     }
 
     @Override
-    @JobsCacheEvict(domain = "'show'", key = "'show_detail_'+#id")
+    @JobsCacheEvict(domain = "'show'")
     public Object updateShowForRecommend(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);

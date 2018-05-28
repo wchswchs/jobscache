@@ -38,20 +38,25 @@ public class JobsCacheEvictOperation extends JobsCacheOperation {
 
     @Override
     public String getKey() {
+        String key = "";
+
+        if (!this.domain.isEmpty()) {
+            key += "'" + this.getCacheNames().iterator().next() + "'.concat(':').concat(" + this.domain + ")";
+        }
+        if (!this.domainKey.isEmpty()) {
+            key += ".concat(':').concat(" + this.domainKey + ")";
+        }
         if (!this.key.isEmpty()) {
-            if (!this.domainKey.isEmpty()) {
-                if (!this.domain.isEmpty()) {
-                    return "'" + this.getCacheNames().iterator().next() + "'.concat(':').concat(" + this.domain +  ").concat(':').concat(" + this.domainKey + ").concat(':*')";
-                } else {
-                    return "'" + this.getCacheNames().iterator().next() + "'.concat(':').concat(" + this.domainKey + ").concat(':*')";
-                }
-            } else if (!this.domain.isEmpty()){
-                return "'" + this.getCacheNames().iterator().next() + "'.concat(':').concat(" + this.domain + ").concat(':*')";
+            if (!key.isEmpty()) {
+                key += ".concat(':').concat(" + this.key + ")";
             } else {
-                return this.key;
+                key += this.key;
             }
         }
-        return null;
+
+        key += ".concat(':*')";
+
+        return key;
     }
 
     /**
