@@ -14,10 +14,11 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 
 1. 兼容Spring Cache @Cacheable，@CachePut，@CacheEvict注解
 2. 支持关联缓存更新
-3. 支持缓存自动过期
-4. 支持Spring Expression
-5. 支持二级关联缓存更新
-6. 当前仅支持Redis(未来会扩展Guava,EHCache,Caffeine等)
+3. 支持db与cache关联更新
+4. 支持缓存自动过期
+5. 支持Spring Expression
+6. 支持二级关联缓存更新
+7. 当前仅支持Redis(未来会扩展Guava,EHCache,Caffeine等)
 
 ## 用法
 
