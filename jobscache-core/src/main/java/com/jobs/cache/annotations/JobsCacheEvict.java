@@ -10,8 +10,6 @@ public @interface JobsCacheEvict {
 
     String domain() default "";
 
-    String domainKey() default "";
-
     String key() default "";
 
     String condition() default "";

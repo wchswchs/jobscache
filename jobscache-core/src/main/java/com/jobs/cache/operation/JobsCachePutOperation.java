@@ -1,6 +1,7 @@
 package com.jobs.cache.operation;
 
 import com.jobs.cache.JobsCacheOperation;
+import com.jobs.cache.version.TimestampVersion;
 
 @SuppressWarnings("all")
 public class JobsCachePutOperation extends JobsCacheOperation {

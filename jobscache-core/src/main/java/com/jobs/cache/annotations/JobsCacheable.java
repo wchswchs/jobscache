@@ -10,8 +10,6 @@ public @interface JobsCacheable {
 
     String domain() default "";
 
-    String domainKey() default "";
-
     String key() default "";
 
     String condition() default "";

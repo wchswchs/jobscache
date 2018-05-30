@@ -1,6 +1,7 @@
 package com.jobs.cache.operation;
 
 import com.jobs.cache.JobsCacheOperation;
+import com.jobs.cache.version.TimestampVersion;
 import org.springframework.cache.Cache;
 
 @SuppressWarnings("all")
@@ -27,11 +28,14 @@ public class JobsCacheableOperation extends JobsCacheOperation {
     public String getKey() {
         String key = "";
 
+        TimestampVersion version = new TimestampVersion();
+        String domainVersion = version.getVersion();
+
         if (!this.domain.isEmpty()) {
             key += this.domain;
         }
-        if (!this.domainKey.isEmpty()) {
-            key += ".concat(':').concat(" + this.domainKey + ")";
+        if (!key.isEmpty()) {
+            key += ".concat('_" + domainVersion + "')";
         }
         if (!this.key.isEmpty()) {
             if (!key.isEmpty()) {

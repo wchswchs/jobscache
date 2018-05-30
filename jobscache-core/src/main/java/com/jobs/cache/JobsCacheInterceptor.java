@@ -3,10 +3,11 @@ package com.jobs.cache;
 import com.google.common.collect.Iterators;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.jobs.cache.configuration.JobsCacheProperties;
-import com.jobs.cache.thread.BatchEvictProcessor;
+import com.jobs.cache.strategy.VersionControlStrategy;
 import com.jobs.cache.operation.JobsCachePutOperation;
 import com.jobs.cache.operation.JobsCacheEvictOperation;
 import com.jobs.cache.operation.JobsCacheableOperation;
+import com.jobs.cache.thread.BatchEvictProcessor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,6 @@ import org.springframework.context.expression.BeanFactoryResolver;
 import org.springframework.context.expression.CachedExpressionEvaluator;
 import org.springframework.context.expression.MethodBasedEvaluationContext;
 import org.springframework.core.ParameterNameDiscoverer;
-import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -45,6 +45,7 @@ public class JobsCacheInterceptor extends CacheInterceptor {
     private boolean initialized = false;
     private CacheOperationExpressionEvaluator evaluator = new CacheOperationExpressionEvaluator();
     private KeyGenerator keyGenerator = new SimpleKeyGenerator();
+    private VersionControlStrategy evictStrategy = new VersionControlStrategy();
     private CacheResolver cacheResolver;
     private BeanFactory beanFactory;
     private JobsCacheProperties cacheProperties;
@@ -101,6 +102,8 @@ public class JobsCacheInterceptor extends CacheInterceptor {
 
     @Override
     public void afterSingletonsInstantiated() {
+        evictStrategy.setCacheProperties(cacheProperties);
+        evictStrategy.setCacheVersionKey();
         if (getCacheResolver() == null) {
             // Lazily initialize cache resolver via default cache manager...
             try {
@@ -296,10 +299,12 @@ public class JobsCacheInterceptor extends CacheInterceptor {
         public void apply(Object result) {
             if (this.context.canPutToCache(result)) {
                 for (Cache cache : this.context.getCaches()) {
-                    ((RedisCacheManager) beanFactory.getBean(CacheManager.class))
-                            .setDefaultExpiration(((JobsCacheOperation) context.getOperation())
-                                    .getExpireTime());
                     doPut(cache, this.key, result);
+                    if (context.getOperation() instanceof JobsCacheableOperation &&
+                            !((JobsCacheOperation) context.getOperation()).domain.isEmpty()) {
+                        evictStrategy.setCache(cache);
+                        evictStrategy.write(key);
+                    }
                 }
             }
         }
@@ -751,19 +756,23 @@ public class JobsCacheInterceptor extends CacheInterceptor {
                     key = context.generateKey(result);
                 }
                 logInvalidating(context, operation, key);
-                doEvict(cache, key);
+                doEvict(context, cache, key);
             }
         }
     }
 
-    @Override
-    public void doEvict(Cache cache, Object key) {
+    public void doEvict(CacheOperationContext context, Cache cache, Object key) {
         try {
-            ThreadPoolExecutor evictMainExecutor = new ThreadPoolExecutor(1, 1000, 0L,
-                                                    TimeUnit.SECONDS, new SynchronousQueue<>(),
-                                                    (new ThreadFactoryBuilder()).setNameFormat("evict-main-%d").build());
-            Future evictFuture = evictMainExecutor.submit(new CacheEvictProcessor(cache, key));
-//            cacheEvictProcessorThread.start();
+            if (((JobsCacheOperation) context.getOperation()).key.isEmpty()) {
+                evictStrategy.setCache(cache);
+                evictStrategy.clear(key);
+                ThreadPoolExecutor evictMainExecutor = new ThreadPoolExecutor(1, 1000, 0L,
+                        TimeUnit.SECONDS, new SynchronousQueue<>(),
+                        (new ThreadFactoryBuilder()).setNameFormat("evict-main-%d").build());
+                Future evictFuture = evictMainExecutor.submit(new CacheEvictProcessor(cache, KeyProcessor.convertPattern(key)));
+            } else {
+                cache.evict(key);
+            }
         } catch (RuntimeException ex) {
             getErrorHandler().handleCacheEvictError(ex, cache, key);
         }
@@ -808,6 +817,10 @@ public class JobsCacheInterceptor extends CacheInterceptor {
 
     private Cache.ValueWrapper findInCaches(CacheOperationContext context, Object key) {
         for (Cache cache : context.getCaches()) {
+            if (!((JobsCacheOperation) context.getOperation()).domain.isEmpty()) {
+                evictStrategy.setCache(cache);
+                key = evictStrategy.determine(key);
+            }
             Cache.ValueWrapper wrapper = doGet(cache, key);
             if (wrapper != null) {
                 if (logger.isTraceEnabled()) {
@@ -886,8 +899,8 @@ public class JobsCacheInterceptor extends CacheInterceptor {
                     if (keyNum > 0) {
                         int keyCount, threadCount = 0;
                         ThreadPoolExecutor evictExecutor = new ThreadPoolExecutor(5, cacheProperties.getBatchEvictThreadPoolSize(), 0L,
-                                                                TimeUnit.SECONDS, new SynchronousQueue<>(),
-                                                                (new ThreadFactoryBuilder()).setNameFormat("evict-thead-%d").build());
+                                TimeUnit.SECONDS, new SynchronousQueue<>(),
+                                (new ThreadFactoryBuilder()).setNameFormat("evict-thead-%d").build());
                         if (keyNum >= cacheProperties.getMaxEvictThreadNum()) {
                             threadCount = cacheProperties.getMaxEvictThreadNum();
                             keyCount = (int) Math.ceil(keyNum / cacheProperties.getMaxEvictThreadNum());
@@ -911,4 +924,5 @@ public class JobsCacheInterceptor extends CacheInterceptor {
         }
 
     }
+
 }

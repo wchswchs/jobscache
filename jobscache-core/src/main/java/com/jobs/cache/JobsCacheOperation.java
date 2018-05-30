@@ -33,6 +33,14 @@ public class JobsCacheOperation extends CacheOperation {
         protected String domain;
         protected String key = "";
 
+        public String getDomain() {
+            return domain;
+        }
+
+        public String getDomainKey() {
+            return domainKey;
+        }
+
         @Override
         public void setKey(String key) {
             Assert.notNull(key, "Key must not be null");

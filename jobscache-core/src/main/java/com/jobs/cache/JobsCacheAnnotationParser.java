@@ -137,7 +137,7 @@ public class JobsCacheAnnotationParser implements CacheAnnotationParser, Seriali
         builder.setCondition(cacheable.condition());
         builder.setKey(cacheable.key());
         builder.setDomain(cacheable.domain());
-        builder.setDomainKey(cacheable.domainKey());
+//        builder.setDomainKey(cacheable.domainKey());
         builder.setExpireTime(cacheable.expireTime());
         builder.setCacheNames(cacheProperties.getCacheName());
         defaultConfig.applyDefault(builder);
@@ -152,7 +152,7 @@ public class JobsCacheAnnotationParser implements CacheAnnotationParser, Seriali
         builder.setCondition(cacheEvict.condition());
         builder.setKey(cacheEvict.key());
         builder.setDomain(cacheEvict.domain());
-        builder.setDomainKey(cacheEvict.domainKey());
+//        builder.setDomainKey(cacheEvict.domainKey());
         builder.setCacheNames(cacheProperties.getCacheName());
         defaultConfig.applyDefault(builder);
         JobsCacheEvictOperation op = builder.build();

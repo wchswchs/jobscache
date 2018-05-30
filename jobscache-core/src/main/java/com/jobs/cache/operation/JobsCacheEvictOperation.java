@@ -2,6 +2,7 @@ package com.jobs.cache.operation;
 
 
 import com.jobs.cache.JobsCacheOperation;
+import com.jobs.cache.version.TimestampVersion;
 import org.springframework.cache.Cache;
 
 
@@ -40,11 +41,14 @@ public class JobsCacheEvictOperation extends JobsCacheOperation {
     public String getKey() {
         String key = "";
 
+        TimestampVersion version = new TimestampVersion();
+        String domainVersion = version.getVersion();
+
         if (!this.domain.isEmpty()) {
             key += "'" + this.getCacheNames().iterator().next() + "'.concat(':').concat(" + this.domain + ")";
         }
-        if (!this.domainKey.isEmpty()) {
-            key += ".concat(':').concat(" + this.domainKey + ")";
+        if (!key.isEmpty()) {
+            key += ".concat('_" + domainVersion + "')";
         }
         if (!this.key.isEmpty()) {
             if (!key.isEmpty()) {
@@ -53,8 +57,6 @@ public class JobsCacheEvictOperation extends JobsCacheOperation {
                 key += this.key;
             }
         }
-
-        key += ".concat(':*')";
 
         return key;
     }
