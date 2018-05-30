@@ -1,5 +1,5 @@
 # JobsCache
-Cache框架（支持关联Cache更新）
+高性能Cache框架（支持关联Cache更新）
 
 例如：
 
