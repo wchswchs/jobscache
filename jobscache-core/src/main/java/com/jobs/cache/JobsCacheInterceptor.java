@@ -766,10 +766,12 @@ public class JobsCacheInterceptor extends CacheInterceptor {
             if (((JobsCacheOperation) context.getOperation()).key.isEmpty()) {
                 evictStrategy.setCache(cache);
                 evictStrategy.clear(key);
-                ThreadPoolExecutor evictMainExecutor = new ThreadPoolExecutor(1, 1000, 0L,
-                        TimeUnit.SECONDS, new SynchronousQueue<>(),
-                        (new ThreadFactoryBuilder()).setNameFormat("evict-main-%d").build());
-                Future evictFuture = evictMainExecutor.submit(new CacheEvictProcessor(cache, KeyProcessor.convertPattern(key)));
+
+                RedisTemplate redisTemplate = ((RedisTemplate) cache.getNativeCache());
+                ScheduledExecutorService delayEvictExecutor = Executors.newSingleThreadScheduledExecutor(
+                        new ThreadFactoryBuilder().setNameFormat("evict-main").build());
+                delayEvictExecutor.schedule(new CacheEvictProcessor(redisTemplate, KeyProcessor.convertPattern(key))
+                        , 100, TimeUnit.MILLISECONDS);
             } else {
                 cache.evict(key);
             }
@@ -879,26 +881,25 @@ public class JobsCacheInterceptor extends CacheInterceptor {
 
     class CacheEvictProcessor implements Runnable {
 
-        private final Cache cache;
+        private final RedisTemplate redisTemplate;
         private final Object key;
 
-        CacheEvictProcessor(Cache cache, Object key) {
-            this.cache = cache;
+        CacheEvictProcessor(RedisTemplate redisTemplate, Object key) {
+            this.redisTemplate = redisTemplate;
             this.key = key;
         }
 
         @Override
         public void run() {
-            RedisTemplate redisTemplate = ((RedisTemplate) cache.getNativeCache());
-            RedisConnection conn = redisTemplate.getConnectionFactory().getConnection();
             if (key.toString().contains("*")) {
+                RedisConnection conn = redisTemplate.getConnectionFactory().getConnection();
                 ScanOptions options = ScanOptions.scanOptions().match(key.toString()).build();
                 synchronized (options) {
                     Cursor<byte[]> c = conn.scan(options);
                     int keyNum = Iterators.size(c);
                     if (keyNum > 0) {
                         int keyCount, threadCount = 0;
-                        ThreadPoolExecutor evictExecutor = new ThreadPoolExecutor(5, cacheProperties.getBatchEvictThreadPoolSize(), 0L,
+                        ThreadPoolExecutor evictExecutor = new ThreadPoolExecutor(50, cacheProperties.getBatchEvictThreadPoolSize(), 5L,
                                 TimeUnit.SECONDS, new SynchronousQueue<>(),
                                 (new ThreadFactoryBuilder()).setNameFormat("evict-thead-%d").build());
                         if (keyNum >= cacheProperties.getMaxEvictThreadNum()) {
@@ -918,8 +919,6 @@ public class JobsCacheInterceptor extends CacheInterceptor {
                         }
                     }
                 }
-            } else {
-                cache.evict(key);
             }
         }
 

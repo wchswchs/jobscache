@@ -37,15 +37,15 @@ public class VersionControlStrategy {
         String domain = cacheVersionKey + ":" + KeyProcessor.extractDomain(key);
         redisTemplate.expire(domain, -1, TimeUnit.SECONDS);
         return redisTemplate.opsForList()
-                            .leftPush(domain, String.valueOf(KeyProcessor.trimKey(key)));
+                .leftPush(domain, String.valueOf(KeyProcessor.trimKey(key)));
     }
 
     public Object determine(Object key) {
         String domain = cacheVersionKey + ":" + KeyProcessor.extractDomain(key);
         RedisTemplate redisTemplate = ((RedisTemplate) this.cache.getNativeCache());
         String lastVersion = (String) redisTemplate
-                                        .opsForList()
-                                        .index(domain, 0);
+                .opsForList()
+                .index(domain, 0);
         if (lastVersion != null) {
             return lastVersion + ":" + KeyProcessor.extractKey(key);
         }
