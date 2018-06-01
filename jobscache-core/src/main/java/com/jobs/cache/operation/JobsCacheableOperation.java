@@ -35,7 +35,7 @@ public class JobsCacheableOperation extends JobsCacheOperation {
             key += this.domain;
         }
         if (!key.isEmpty()) {
-            key += ".concat('_" + domainVersion + "')";
+            key += "+'_" + domainVersion + "'";
         }
         if (!this.key.isEmpty()) {
             if (!key.isEmpty()) {
