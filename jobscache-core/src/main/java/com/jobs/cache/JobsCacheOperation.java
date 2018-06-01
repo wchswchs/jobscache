@@ -10,6 +10,11 @@ public class JobsCacheOperation extends CacheOperation {
     protected final String domainKey;
     protected final String key;
 
+    @Override
+    public String getKey() {
+        return this.key;
+    }
+
     public long getExpireTime() {
         return expireTime;
     }

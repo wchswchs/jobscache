@@ -48,7 +48,7 @@ public class JobsCacheEvictOperation extends JobsCacheOperation {
             key += "'" + this.getCacheNames().iterator().next() + "'.concat(':').concat(" + this.domain + ")";
         }
         if (!key.isEmpty()) {
-            key += ".concat('_" + domainVersion + "')";
+            key += "+'_" + domainVersion + "'";
         }
         if (!this.key.isEmpty()) {
             if (!key.isEmpty()) {
