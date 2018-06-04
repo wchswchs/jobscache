@@ -71,7 +71,7 @@ public class JobsAnnotationCacheOperationSource extends AbstractFallbackCacheOpe
 
     @Override
     protected Collection<CacheOperation> findCacheOperations(final Class<?> clazz) {
-        return determineCacheOperations(new com.jobs.cache.JobsAnnotationCacheOperationSource.CacheOperationProvider() {
+        return determineCacheOperations(new JobsAnnotationCacheOperationSource.CacheOperationProvider() {
             @Override
             public Collection<CacheOperation> getCacheOperations(CacheAnnotationParser parser) {
                 return parser.parseCacheAnnotations(clazz);
@@ -82,7 +82,7 @@ public class JobsAnnotationCacheOperationSource extends AbstractFallbackCacheOpe
 
     @Override
     protected Collection<CacheOperation> findCacheOperations(final Method method) {
-        return determineCacheOperations(new com.jobs.cache.JobsAnnotationCacheOperationSource.CacheOperationProvider() {
+        return determineCacheOperations(new JobsAnnotationCacheOperationSource.CacheOperationProvider() {
             @Override
             public Collection<CacheOperation> getCacheOperations(CacheAnnotationParser parser) {
                 return parser.parseCacheAnnotations(method);
@@ -100,7 +100,7 @@ public class JobsAnnotationCacheOperationSource extends AbstractFallbackCacheOpe
      * @param provider the cache operation provider to use
      * @return the configured caching operations, or {@code null} if none found
      */
-    protected Collection<CacheOperation> determineCacheOperations(com.jobs.cache.JobsAnnotationCacheOperationSource.CacheOperationProvider provider) {
+    protected Collection<CacheOperation> determineCacheOperations(JobsAnnotationCacheOperationSource.CacheOperationProvider provider) {
         Collection<CacheOperation> ops = null;
         for (CacheAnnotationParser annotationParser : this.annotationParsers) {
             Collection<CacheOperation> annOps = provider.getCacheOperations(annotationParser);
@@ -131,7 +131,7 @@ public class JobsAnnotationCacheOperationSource extends AbstractFallbackCacheOpe
         if (!(other instanceof AnnotationCacheOperationSource)) {
             return false;
         }
-        com.jobs.cache.JobsAnnotationCacheOperationSource otherCos = (com.jobs.cache.JobsAnnotationCacheOperationSource) other;
+        JobsAnnotationCacheOperationSource otherCos = (JobsAnnotationCacheOperationSource) other;
         return (this.annotationParsers.equals(otherCos.annotationParsers) &&
                 this.publicMethodsOnly == otherCos.publicMethodsOnly);
     }

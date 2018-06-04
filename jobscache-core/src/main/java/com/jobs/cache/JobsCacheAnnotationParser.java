@@ -1,13 +1,14 @@
 package com.jobs.cache;
 
 import com.jobs.cache.annotations.JobsCacheEvict;
+import com.jobs.cache.annotations.JobsCachePut;
 import com.jobs.cache.annotations.JobsCacheable;
 import com.jobs.cache.configuration.JobsCacheProperties;
-import com.jobs.cache.annotations.JobsCachePut;
 import com.jobs.cache.operation.JobsCacheEvictOperation;
 import com.jobs.cache.operation.JobsCachePutOperation;
 import com.jobs.cache.operation.JobsCacheableOperation;
-import org.springframework.cache.annotation.*;
+import org.springframework.cache.annotation.CacheAnnotationParser;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.interceptor.CacheOperation;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.StringUtils;
@@ -60,7 +61,7 @@ public class JobsCacheAnnotationParser implements CacheAnnotationParser, Seriali
             this.cacheResolver = cacheResolver;
         }
 
-        public void applyDefault(org.springframework.cache.interceptor.CacheOperation.Builder builder) {
+        public void applyDefault(CacheOperation.Builder builder) {
             if (builder.getCacheNames().isEmpty() && this.cacheNames != null) {
                 builder.setCacheNames(this.cacheNames);
             }
@@ -167,6 +168,7 @@ public class JobsCacheAnnotationParser implements CacheAnnotationParser, Seriali
         builder.setCacheNames(cacheProperties.getCacheName());
         builder.setCondition(cachePut.condition());
         builder.setUnless(cachePut.unless());
+        builder.setDomain(cachePut.domain());
         builder.setKey(cachePut.key());
         builder.setKeyGenerator(cachePut.keyGenerator());
         builder.setCacheManager(cachePut.cacheManager());

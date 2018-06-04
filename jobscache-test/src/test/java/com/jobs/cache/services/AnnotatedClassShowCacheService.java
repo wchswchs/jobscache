@@ -12,11 +12,30 @@ public class AnnotatedClassShowCacheService {
     private CacheService cacheService;
 
     public Object getShowInfoForRec(String id) {
-        return cacheService.getShowInfoForRec(id);
+        Long lid = Long.valueOf(id);
+        return cacheService.getShowInfoForRec(lid);
+    }
+
+    public Object getShowDetailForRec(String id) {
+        Long lid = Long.valueOf(id);
+        return cacheService.getShowDetailForRec(lid);
+    }
+
+    public Object getSellerDetail(String id) {
+        Long lid = Long.valueOf(id);
+        return cacheService.getSellerInfo(lid);
+    }
+
+    public Object updateShowForPatten(String id, String name) {
+        return cacheService.updateShowForPattern(id, name);
     }
 
     public Object updateShowForRecommend(String id, String name) {
         return cacheService.updateShowForRecommend(id, name);
+    }
+
+    public Object deleteShow(String id) {
+        return cacheService.deleteShow(id);
     }
 
     public Object getRecommandShows(String id, String name) {
@@ -37,6 +56,10 @@ public class AnnotatedClassShowCacheService {
 
     public Object getsCachePutGetShowInfoForRecByAnnotation(String var1) {
         return cacheService.getsCachePutGetShowInfoForRecByAnnotation(var1);
+    }
+
+    public Object getsCachePutGetShowInfoForDomainByAnnotation(String var1) {
+        return cacheService.getsCachePutGetShowInfoForDomainByAnnotation(var1);
     }
 
 }

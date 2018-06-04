@@ -8,7 +8,7 @@ public class KeyProcessor {
 
         String[] keyArr = keyStr.split(":");
         domain += keyStr.replace(":" + keyArr[keyArr.length - 1], "");
-        String[] versionDomainArr = keyArr[keyArr.length - 2].split("_");
+        String[] versionDomainArr = domain.split("_");
         domain = domain.replace("_" + versionDomainArr[versionDomainArr.length - 1], "");
 
         return domain;
@@ -21,6 +21,19 @@ public class KeyProcessor {
         String domainStr = keyStr.replace(keyArr[0] + ":", "");
         String[] versionDomainArr = domainStr.split("_");
         return domainStr.replace("_" + versionDomainArr[versionDomainArr.length - 1], "");
+    }
+
+    public static String extractAbsolutePathDomain(Object key) {
+        String domain = "";
+        String keyStr = String.valueOf(key);
+
+        String[] keyArr = keyStr.split(":");
+        domain += keyStr.replace(":" + keyArr[keyArr.length - 1], "");
+        domain = domain.replace(keyArr[0] + ":", "");
+        String[] versionDomainArr = domain.split("_");
+        domain = domain.replace("_" + versionDomainArr[versionDomainArr.length - 1], "");
+
+        return domain;
     }
 
     public static String extractKey(Object key) {
@@ -37,11 +50,8 @@ public class KeyProcessor {
         return keyStr.replace(":" + keyArr[keyArr.length - 1], "");
     }
 
-    public static String convertPattern(Object key) {
-        String keyStr = String.valueOf(key);
-
-        String[] keyArr = keyStr.split(":");
-        return keyStr.replace(":" + keyArr[keyArr.length - 1], ":*");
+    public static String convertPattern(Object domain) {
+        return domain + ":*";
     }
 
 }

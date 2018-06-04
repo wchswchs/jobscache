@@ -23,8 +23,40 @@ public class JobsCacheTest {
     private JobsCacheProperties cacheProperties;
 
     @Test
+    public void testGetShowDetail1ForRecByAnnotation() throws Exception {
+//        for (int i = 0; i < 100; i ++) {
+        Object val = cacheService.getShowDetailForRec("1");
+//        }
+        Cache cache = cacheManager.getCache(cacheProperties.getCacheName());
+        if (cache != null) {
+            if (cache.get("show_1:show_detail_1") != null) {
+                Assert.assertEquals(val.toString(), cache.get("show_1:show_detail_1").get().toString());
+            }
+        } else {
+            Assert.assertNull(cache.get("show_1:show_detail_1"));
+        }
+    }
+
+    @Test
+    public void testGetShowDetail2ForRecByAnnotation() throws Exception {
+//        for (int i = 0; i < 100; i ++) {
+        Object val = cacheService.getShowDetailForRec("2");
+//        }
+        Cache cache = cacheManager.getCache(cacheProperties.getCacheName());
+        if (cache != null) {
+            if (cache.get("show_2:show_detail_2") != null) {
+                Assert.assertEquals(val.toString(), cache.get("show_2:show_detail_2").get().toString());
+            }
+        } else {
+            Assert.assertNull(cache.get("show_2:show_detail_2"));
+        }
+    }
+
+    @Test
     public void testGetShowInfoForRecByAnnotation() throws Exception {
+//        for (int i = 0; i < 100; i ++) {
         Object val = cacheService.getShowInfoForRec("20180510");
+//        }
         Cache cache = cacheManager.getCache(cacheProperties.getCacheName());
         if (cache != null) {
             if (cache.get("show:show_detail_20180510") != null) {
@@ -50,10 +82,12 @@ public class JobsCacheTest {
 
     @Test
     public void testUpdateShowForRecByAnnotation() throws Exception {
-        Object id = cacheService.updateShowForRecommend("20180510", "王五");
+//        for (int i = 0; i < 6; i ++) {
+            Object id = cacheService.updateShowForRecommend("20180510", "王五");
+//        }
         Cache cache = cacheManager.getCache(cacheProperties.getCacheName());
-        Thread.sleep(10000);
         Assert.assertNull(cache.get("show:show_detail_20180510"));
+        Thread.sleep(20000);
     }
 
     @Test
@@ -70,7 +104,7 @@ public class JobsCacheTest {
 
     @Test
     public void TestCacheableUpdateShowForRecByAnnotation() throws Exception {
-        Object val = cacheService.getCacheableUpdateShowForRecommend("Wh201805100000000", "wuhan湖北武汉");
+        Object val = cacheService.getCacheableUpdateShowForRecommend("2018051416510000000000000000", "wuhan湖北武汉");
         System.out.println(val);
     }
 
@@ -79,4 +113,35 @@ public class JobsCacheTest {
         Object val = cacheService.getsCachePutGetShowInfoForRecByAnnotation("Wust2018051416510000000000000000");
         System.out.print(val);
     }
+
+    @Test
+    public void testGetSellerDetailByAnnotation() throws Exception {
+//        for (int i = 0; i < 100; i ++) {
+        Object val = cacheService.getSellerDetail("1");
+//        }
+        Cache cache = cacheManager.getCache(cacheProperties.getCacheName());
+        if (cache != null) {
+            if (cache.get("seller:seller_detail_1") != null) {
+                Assert.assertEquals(val.toString(), cache.get("seller:seller_detail_1").get().toString());
+            }
+        } else {
+            Assert.assertNull(cache.get("seller:seller_detail_1"));
+        }
+    }
+
+    @Test
+    public void TestCachePutGetShowInfoForDomainByAnnotation() throws Exception {
+        Object val = cacheService.getsCachePutGetShowInfoForDomainByAnnotation("1");
+        System.out.print(val);
+    }
+
+    @Test
+    public void testDeleteShowForRecByAnnotation() throws Exception {
+//        for (int i = 0; i < 6; i ++) {
+        Object id = cacheService.deleteShow("20180510");
+//        }
+        Cache cache = cacheManager.getCache(cacheProperties.getCacheName());
+        Assert.assertNull(cache.get("show:show_detail_20180510"));
+    }
+
 }

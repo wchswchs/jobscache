@@ -3,10 +3,10 @@ package com.jobs.cache;
 import com.google.common.collect.Iterators;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.jobs.cache.configuration.JobsCacheProperties;
-import com.jobs.cache.strategy.VersionControlStrategy;
-import com.jobs.cache.operation.JobsCachePutOperation;
 import com.jobs.cache.operation.JobsCacheEvictOperation;
+import com.jobs.cache.operation.JobsCachePutOperation;
 import com.jobs.cache.operation.JobsCacheableOperation;
+import com.jobs.cache.strategy.VersionControlStrategy;
 import com.jobs.cache.thread.BatchEvictProcessor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.slf4j.Logger;
@@ -347,6 +347,14 @@ public class JobsCacheInterceptor extends CacheInterceptor {
         }
         if (logger.isTraceEnabled()) {
             logger.trace("Computed cache key '" + key + "' for operation " + context.metadata.operation);
+        }
+        if (!((JobsCacheOperation) context.getOperation()).key.isEmpty()
+                && !((JobsCacheOperation) context.getOperation()).domain.isEmpty()) {
+            evictStrategy.setCache(context.caches.iterator().next());
+            if (context.getOperation() instanceof JobsCacheEvictOperation) {
+                return evictStrategy.determine(key, true);
+            }
+            return evictStrategy.determine(key, false);
         }
         return key;
     }
@@ -753,7 +761,7 @@ public class JobsCacheInterceptor extends CacheInterceptor {
                 doClear(cache);
             } else {
                 if (key == null) {
-                    key = context.generateKey(result);
+                    key = generateKey(context, result);
                 }
                 logInvalidating(context, operation, key);
                 doEvict(context, cache, key);
@@ -765,13 +773,15 @@ public class JobsCacheInterceptor extends CacheInterceptor {
         try {
             if (((JobsCacheOperation) context.getOperation()).key.isEmpty()) {
                 evictStrategy.setCache(cache);
-                evictStrategy.clear(key);
-
-                RedisTemplate redisTemplate = ((RedisTemplate) cache.getNativeCache());
-                ScheduledExecutorService delayEvictExecutor = Executors.newSingleThreadScheduledExecutor(
-                        new ThreadFactoryBuilder().setNameFormat("evict-main").build());
-                delayEvictExecutor.schedule(new CacheEvictProcessor(redisTemplate, KeyProcessor.convertPattern(key))
-                        , 100, TimeUnit.MILLISECONDS);
+                String versionDomain = evictStrategy.clear(key);
+                if (versionDomain != null) {
+                    RedisTemplate redisTemplate = (RedisTemplate) cache.getNativeCache();
+                    ScheduledExecutorService delayEvictExecutor = Executors.newSingleThreadScheduledExecutor(
+                            new ThreadFactoryBuilder().setNameFormat("evict-main").build());
+                    delayEvictExecutor.schedule(new CacheEvictProcessor(redisTemplate,
+                                    cacheProperties.getCacheName() + ":" + KeyProcessor.convertPattern(versionDomain))
+                            , 100, TimeUnit.MILLISECONDS);
+                }
             } else {
                 cache.evict(key);
             }
@@ -819,10 +829,6 @@ public class JobsCacheInterceptor extends CacheInterceptor {
 
     private Cache.ValueWrapper findInCaches(CacheOperationContext context, Object key) {
         for (Cache cache : context.getCaches()) {
-            if (!((JobsCacheOperation) context.getOperation()).domain.isEmpty()) {
-                evictStrategy.setCache(cache);
-                key = evictStrategy.determine(key);
-            }
             Cache.ValueWrapper wrapper = doGet(cache, key);
             if (wrapper != null) {
                 if (logger.isTraceEnabled()) {
@@ -850,8 +856,8 @@ public class JobsCacheInterceptor extends CacheInterceptor {
 
     private boolean hasCachePut(JobsCacheInterceptor.CacheOperationContexts contexts) {
         // Evaluate the conditions *without* the result object because we don't have it yet...
-        Collection<JobsCacheInterceptor.CacheOperationContext> cachePutContexts = contexts.get(JobsCachePutOperation.class);
-        Collection<JobsCacheInterceptor.CacheOperationContext> excluded = new ArrayList<JobsCacheInterceptor.CacheOperationContext>();
+        Collection<CacheOperationContext> cachePutContexts = contexts.get(JobsCachePutOperation.class);
+        Collection<CacheOperationContext> excluded = new ArrayList<CacheOperationContext>();
         for (JobsCacheInterceptor.CacheOperationContext context : cachePutContexts) {
             try {
                 if (!context.isConditionPassing(CacheOperationExpressionEvaluator.RESULT_UNAVAILABLE)) {

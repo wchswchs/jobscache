@@ -12,6 +12,30 @@ public class JobsCachePutOperation extends JobsCacheOperation {
         this.unless = b.unless;
     }
 
+    @Override
+    public String getKey() {
+        String key = "";
+
+        TimestampVersion version = new TimestampVersion();
+        String domainVersion = version.getVersion();
+
+        if (!this.domain.isEmpty()) {
+            key += this.domain;
+        }
+        if (!key.isEmpty()) {
+            key += "+'_" + domainVersion + "'";
+        }
+        if (!this.key.isEmpty()) {
+            if (!key.isEmpty()) {
+                key += ".concat(':').concat(" + this.key + ")";
+            } else {
+                key += this.key;
+            }
+        }
+
+        return key;
+    }
+
     public String getUnless() {
         return this.unless;
     }

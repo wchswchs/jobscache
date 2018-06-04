@@ -15,6 +15,8 @@ public @interface JobsCachePut {
     @AliasFor("value")
     String[] cacheNames() default {};
 
+    String domain() default "";
+
     String key() default "";
 
     String keyGenerator() default "";

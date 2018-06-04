@@ -20,36 +20,38 @@ public class VersionControlStrategy {
         this.cache = cache;
     }
 
-    public boolean clear(Object key) {
+    public String clear(Object key) {
         String domain = cacheVersionKey + ":" + KeyProcessor.extractDomain2(key);
-        RedisTemplate redisTemplate = ((RedisTemplate) this.cache.getNativeCache());
-        String lastVersion = (String) redisTemplate
+        RedisTemplate redisTemplate = (RedisTemplate) this.cache.getNativeCache();
+        return (String) redisTemplate
                 .opsForList()
                 .leftPop(domain);
-        if (lastVersion != null) {
-            return true;
-        }
-        return false;
     }
 
     public Long write(Object key) {
-        RedisTemplate redisTemplate = ((RedisTemplate) this.cache.getNativeCache());
+        RedisTemplate redisTemplate = (RedisTemplate) this.cache.getNativeCache();
         String domain = cacheVersionKey + ":" + KeyProcessor.extractDomain(key);
         redisTemplate.expire(domain, -1, TimeUnit.SECONDS);
         return redisTemplate.opsForList()
-                .leftPush(domain, String.valueOf(KeyProcessor.trimKey(key)));
+                            .leftPush(domain, String.valueOf(KeyProcessor.trimKey(key)));
     }
 
-    public Object determine(Object key) {
-        String domain = cacheVersionKey + ":" + KeyProcessor.extractDomain(key);
-        RedisTemplate redisTemplate = ((RedisTemplate) this.cache.getNativeCache());
+    public Object determine(Object key, boolean hasFirstLevel) {
+        String domain = "";
+
+        if (hasFirstLevel == false) {
+            domain = cacheVersionKey + ":" + KeyProcessor.extractDomain(key);
+        } else {
+            domain = cacheVersionKey + ":" + KeyProcessor.extractAbsolutePathDomain(key);
+        }
+        RedisTemplate redisTemplate = (RedisTemplate) this.cache.getNativeCache();
         String lastVersion = (String) redisTemplate
-                .opsForList()
-                .index(domain, 0);
+                                        .opsForList()
+                                        .index(domain, 0);
         if (lastVersion != null) {
             return lastVersion + ":" + KeyProcessor.extractKey(key);
         }
-        return "";
+        return key;
     }
 
     public Cache getCache() {

@@ -1,10 +1,10 @@
 package com.jobs.cache.services;
 
-import com.jobs.cache.annotations.JobsCacheEvict;
-import com.jobs.cache.annotations.JobsCacheable;
 import com.jobs.cache.CacheService;
 import com.jobs.cache.ShowInfo;
+import com.jobs.cache.annotations.JobsCacheEvict;
 import com.jobs.cache.annotations.JobsCachePut;
+import com.jobs.cache.annotations.JobsCacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,12 +15,31 @@ import java.util.List;
 public class AnnotatedInnerShowCacheService implements CacheService<Object> {
 
     @JobsCacheable(domain = "'show'", key = "'show_detail_'+#id")
-    public Object getShowInfoForRec(String id) {
+    public Object getShowInfoForRec(Long id) {
         ShowInfo methodShow = new ShowInfo();
-        methodShow.setId(id);
+        methodShow.setId(String.valueOf(id));
         methodShow.setName("李四");
 
         return methodShow;
+    }
+
+    @JobsCacheable(domain = "'show_'+#id", key = "'show_detail_'+#id")
+    public Object getShowDetailForRec(Long id) {
+        ShowInfo methodShow = new ShowInfo();
+        methodShow.setId(String.valueOf(id));
+        methodShow.setName("李四");
+
+        return methodShow;
+    }
+
+    @Override
+    @JobsCacheEvict(domain = "'show_*'")
+    public Object updateShowForPattern(String id, String name) {
+        ShowInfo methodShow = new ShowInfo();
+        methodShow.setId(id);
+        methodShow.setName(name);
+
+        return id;
     }
 
     @Override
@@ -74,12 +93,36 @@ public class AnnotatedInnerShowCacheService implements CacheService<Object> {
     }
 
     @Override
-    @JobsCachePut(key = "'seller_detail_'+#id")
+    @JobsCachePut(key = "'seller_detail_'+#var1")
     public Object getsCachePutGetShowInfoForRecByAnnotation(String var1) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(var1);
         methodShow.setName("赵六");
         return var1;
+    }
+
+    @JobsCacheable(domain = "'seller'", key = "'seller_detail_'+#id")
+    public Object getSellerInfo(Long id) {
+        ShowInfo methodShow = new ShowInfo();
+        methodShow.setId(String.valueOf(id));
+        methodShow.setName("李四");
+
+        return methodShow;
+    }
+
+    @Override
+    @JobsCachePut(domain = "'seller'", key = "'seller_detail_'+#var1")
+    public Object getsCachePutGetShowInfoForDomainByAnnotation(String var1) {
+        ShowInfo methodShow = new ShowInfo();
+        methodShow.setId(var1);
+        methodShow.setName("赵六");
+        return methodShow;
+    }
+
+    @Override
+    @JobsCacheEvict(domain = "'show'", key = "'show_detail_'+#id")
+    public Object deleteShow(String id) {
+        return null;
     }
 
 }
