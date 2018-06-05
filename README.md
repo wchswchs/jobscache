@@ -1,6 +1,8 @@
 # JobsCache
 高性能Cache框架（支持关联Cache更新）
 
+该框架创新解决了使用Redis模糊删除key的性能问题，更高效地支持了关联Cache的更新
+
 例如：
 
 现存在两个key
