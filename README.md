@@ -16,7 +16,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 2. 支持cache与cache关联更新
 3. 支持db与cache关联更新
 4. 支持缓存自动过期
-5. key支持的正则表达式
+5. key支持正则表达式
 6. 支持Spring Expression
 7. 支持二级关联缓存更新
 8. 当前仅支持Redis(未来会扩展Guava,EHCache,Caffeine等)
