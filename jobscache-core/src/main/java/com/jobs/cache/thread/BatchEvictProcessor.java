@@ -6,7 +6,6 @@ import org.springframework.data.redis.core.Cursor;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class BatchEvictProcessor implements Runnable {
