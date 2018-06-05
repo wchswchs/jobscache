@@ -42,16 +42,36 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 ### 使用示例 ###
 
 ```java
-    @JobsCacheable(domain = "'show'", key = "'show_detail_'+#id")
-    public Object getShowInfoForRec(String id) {
+    @JuqiCacheable(domain = "'show'", key = "'show_detail_'+#id")
+    public Object getShowInfoForRec(Long id) {
         ShowInfo methodShow = new ShowInfo();
-        methodShow.setId(id);
+        methodShow.setId(String.valueOf(id));
         methodShow.setName("李四");
 
         return methodShow;
     }
 
-    @JobsCacheEvict(domain = "'show'")
+    @JuqiCacheable(domain = "'show_'+#id", key = "'show_detail_'+#id")
+    public Object getShowDetailForRec(Long id) {
+        ShowInfo methodShow = new ShowInfo();
+        methodShow.setId(String.valueOf(id));
+        methodShow.setName("李四");
+
+        return methodShow;
+    }
+
+    @Override
+    @JuqiCacheEvict(domain = "'show_*'")
+    public Object updateShowForPattern(String id, String name) {
+        ShowInfo methodShow = new ShowInfo();
+        methodShow.setId(id);
+        methodShow.setName(name);
+
+        return id;
+    }
+
+    @Override
+    @JuqiCacheEvict(domain = "'show'")
     public Object updateShowForRecommend(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
@@ -60,7 +80,8 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return id;
     }
 
-    @JobsCacheable(domain = "'show'", key = "'recommend_shows'", expireTime = 5000L)
+    @Override
+    @JuqiCacheable(domain = "'show'", key = "'recommend_shows'", expireTime = 5000L)
     public Object getRecommandShows(String id, String name) {
         List<ShowInfo> list = new ArrayList<ShowInfo>();
         ShowInfo methodShow = new ShowInfo();
@@ -70,7 +91,8 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return list;
     }
 
-    @JobsCacheable(key = "'order_detail_'+#id")
+    @Override
+    @JuqiCacheable(key = "'order_detail_'+#id")
     public Object getCacheableShowInfoForRecByAnnotation(String id) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
@@ -78,7 +100,8 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return methodShow;
     }
 
-    @JobsCacheable(key = "'recommend_orders'")
+    @Override
+    @JuqiCacheable(key = "'recommend_orders'")
     public Object getCacheableRecommandShows(String id, String name) {
         List<ShowInfo> list = new ArrayList<ShowInfo>();//getCacheableRecommandShows
         ShowInfo methodShow = new ShowInfo();
@@ -88,19 +111,45 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return list;
     }
 
-    @JobsCacheEvict(key = "'order_detail_'+#id")
+    @Override
+    @JuqiCacheEvict(key = "'order_detail_'+#id")
     public Object getCacheableUpdateShowForRecommend(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
         methodShow.setName(name);
         return id;
     }
-    
-    @JobsCachePut(key = "'seller_detail_'+#id")
+
+    @Override
+    @JuqiCachePut(key = "'seller_detail_'+#var1")
     public Object getsCachePutGetShowInfoForRecByAnnotation(String var1) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(var1);
         methodShow.setName("赵六");
         return var1;
+    }
+
+    @JuqiCacheable(domain = "'seller'", key = "'seller_detail_'+#id")
+    public Object getSellerInfo(Long id) {
+        ShowInfo methodShow = new ShowInfo();
+        methodShow.setId(String.valueOf(id));
+        methodShow.setName("李四");
+
+        return methodShow;
+    }
+
+    @Override
+    @JuqiCachePut(domain = "'seller'", key = "'seller_detail_'+#var1")
+    public Object getsCachePutGetShowInfoForDomainByAnnotation(String var1) {
+        ShowInfo methodShow = new ShowInfo();
+        methodShow.setId(var1);
+        methodShow.setName("赵六");
+        return methodShow;
+    }
+
+    @Override
+    @JuqiCacheEvict(domain = "'show'", key = "'show_detail_'+#id")
+    public Object deleteShow(String id) {
+        return null;
     }
 ```
