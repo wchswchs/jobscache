@@ -900,28 +900,26 @@ public class JobsCacheInterceptor extends CacheInterceptor {
             if (key.toString().contains("*")) {
                 RedisConnection conn = redisTemplate.getConnectionFactory().getConnection();
                 ScanOptions options = ScanOptions.scanOptions().match(key.toString()).build();
-                synchronized (options) {
-                    Cursor<byte[]> c = conn.scan(options);
-                    int keyNum = Iterators.size(c);
-                    if (keyNum > 0) {
-                        int keyCount, threadCount = 0;
-                        ThreadPoolExecutor evictExecutor = new ThreadPoolExecutor(50, cacheProperties.getBatchEvictThreadPoolSize(), 5L,
-                                TimeUnit.SECONDS, new SynchronousQueue<>(),
-                                (new ThreadFactoryBuilder()).setNameFormat("evict-thead-%d").build());
-                        if (keyNum >= cacheProperties.getMaxEvictThreadNum()) {
-                            threadCount = cacheProperties.getMaxEvictThreadNum();
-                            keyCount = (int) Math.ceil(keyNum / cacheProperties.getMaxEvictThreadNum());
-                        } else {
-                            threadCount = (int) Math.floor(keyNum / cacheProperties.getMaxEvictThreadNum()) + 1;
-                            keyCount = keyNum;
-                        }
-                        if (threadCount > 0 && keyCount > 0) {
-                            for (int i = 0; i < threadCount; i++) {
-                                options = ScanOptions.scanOptions().match(key.toString()).count(keyCount).build();
-                                c = conn.scan(options);
-                                LOG.info("Batch Evict Thread Starting");
-                                evictExecutor.submit(new BatchEvictProcessor(redisTemplate, c));
-                            }
+                Cursor<byte[]> c = conn.scan(options);
+                int keyNum = Iterators.size(c);
+                if (keyNum > 0) {
+                    int keyCount, threadCount = 0;
+                    ThreadPoolExecutor evictExecutor = new ThreadPoolExecutor(50, cacheProperties.getBatchEvictThreadPoolSize(), 5L,
+                            TimeUnit.SECONDS, new SynchronousQueue<>(),
+                            (new ThreadFactoryBuilder()).setNameFormat("evict-thead-%d").build());
+                    if (keyNum >= cacheProperties.getMaxEvictThreadNum()) {
+                        threadCount = cacheProperties.getMaxEvictThreadNum();
+                        keyCount = (int) Math.ceil(keyNum / cacheProperties.getMaxEvictThreadNum());
+                    } else {
+                        threadCount = (int) Math.floor(keyNum / cacheProperties.getMaxEvictThreadNum()) + 1;
+                        keyCount = keyNum;
+                    }
+                    if (threadCount > 0 && keyCount > 0) {
+                        for (int i = 0; i < threadCount; i++) {
+                            options = ScanOptions.scanOptions().match(key.toString()).count(keyCount).build();
+                            c = conn.scan(options);
+                            LOG.info("Batch Evict Thread Starting");
+                            evictExecutor.submit(new BatchEvictProcessor(redisTemplate, c));
                         }
                     }
                 }

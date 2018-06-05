@@ -23,7 +23,7 @@ public class BatchEvictProcessor implements Runnable {
 
     @Override
     public void run() {
-        List<String> keys = Collections.synchronizedList(new ArrayList<String>());
+        List<String> keys = new ArrayList<String>();
         LOG.info("Batch Evict Processing");
         try {
             while (cursor.hasNext()) {
