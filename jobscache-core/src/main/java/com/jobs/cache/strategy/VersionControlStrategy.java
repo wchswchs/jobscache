@@ -10,14 +10,11 @@ import java.util.concurrent.TimeUnit;
 public class VersionControlStrategy {
 
     private Cache cache;
-    private JobsCacheProperties cacheProperties;
+    private final JobsCacheProperties cacheProperties;
     private String cacheVersionKey;
 
-    public VersionControlStrategy() {
-    }
-
-    public VersionControlStrategy(Cache cache) {
-        this.cache = cache;
+    public VersionControlStrategy(JobsCacheProperties cacheProperties) {
+        this.cacheProperties = cacheProperties;
     }
 
     public String clear(Object key) {
@@ -54,16 +51,12 @@ public class VersionControlStrategy {
         return key;
     }
 
-    public Cache getCache() {
+    public synchronized Cache getCache() {
         return cache;
     }
 
-    public void setCache(Cache cache) {
+    public synchronized void setCache(Cache cache) {
         this.cache = cache;
-    }
-
-    public void setCacheProperties(JobsCacheProperties cacheProperties) {
-        this.cacheProperties = cacheProperties;
     }
 
     public String getCacheVersionKey() {

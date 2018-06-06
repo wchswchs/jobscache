@@ -45,7 +45,7 @@ public class JobsCacheInterceptor extends CacheInterceptor {
     private boolean initialized = false;
     private CacheOperationExpressionEvaluator evaluator = new CacheOperationExpressionEvaluator();
     private KeyGenerator keyGenerator = new SimpleKeyGenerator();
-    private VersionControlStrategy evictStrategy = new VersionControlStrategy();
+    private VersionControlStrategy evictStrategy;
     private CacheResolver cacheResolver;
     private BeanFactory beanFactory;
     private JobsCacheProperties cacheProperties;
@@ -102,7 +102,7 @@ public class JobsCacheInterceptor extends CacheInterceptor {
 
     @Override
     public void afterSingletonsInstantiated() {
-        evictStrategy.setCacheProperties(cacheProperties);
+        evictStrategy = new VersionControlStrategy(cacheProperties);
         evictStrategy.setCacheVersionKey();
         if (getCacheResolver() == null) {
             // Lazily initialize cache resolver via default cache manager...
