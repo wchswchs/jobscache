@@ -44,7 +44,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 ### 使用示例 ###
 
 ```java
-    @JuqiCacheable(domain = "'show'", key = "'show_detail_'+#id")
+    @JobsCacheable(domain = "'show'", key = "'show_detail_'+#id")
     public Object getShowInfoForRec(Long id) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(String.valueOf(id));
@@ -53,7 +53,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return methodShow;
     }
 
-    @JuqiCacheable(domain = "'show_'+#id", key = "'show_detail_'+#id")
+    @JobsCacheable(domain = "'show_'+#id", key = "'show_detail_'+#id")
     public Object getShowDetailForRec(Long id) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(String.valueOf(id));
@@ -63,7 +63,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCacheEvict(domain = "'show_*'")
+    @JobsCacheEvict(domain = "'show_*'")
     public Object updateShowForPattern(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
@@ -73,7 +73,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCacheEvict(domain = "'show'")
+    @JobsCacheEvict(domain = "'show'")
     public Object updateShowForRecommend(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
@@ -83,7 +83,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCacheable(domain = "'show'", key = "'recommend_shows'", expireTime = 5000L)
+    @JobsCacheable(domain = "'show'", key = "'recommend_shows'", expireTime = 5000L)
     public Object getRecommandShows(String id, String name) {
         List<ShowInfo> list = new ArrayList<ShowInfo>();
         ShowInfo methodShow = new ShowInfo();
@@ -94,7 +94,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCacheable(key = "'order_detail_'+#id")
+    @JobsCacheable(key = "'order_detail_'+#id")
     public Object getCacheableShowInfoForRecByAnnotation(String id) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
@@ -103,7 +103,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCacheable(key = "'recommend_orders'")
+    @JobsCacheable(key = "'recommend_orders'")
     public Object getCacheableRecommandShows(String id, String name) {
         List<ShowInfo> list = new ArrayList<ShowInfo>();//getCacheableRecommandShows
         ShowInfo methodShow = new ShowInfo();
@@ -114,7 +114,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCacheEvict(key = "'order_detail_'+#id")
+    @JobsCacheEvict(key = "'order_detail_'+#id")
     public Object getCacheableUpdateShowForRecommend(String id, String name) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(id);
@@ -123,7 +123,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCachePut(key = "'seller_detail_'+#var1")
+    @JobsCachePut(key = "'seller_detail_'+#var1")
     public Object getsCachePutGetShowInfoForRecByAnnotation(String var1) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(var1);
@@ -131,7 +131,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
         return var1;
     }
 
-    @JuqiCacheable(domain = "'seller'", key = "'seller_detail_'+#id")
+    @JobsCacheable(domain = "'seller'", key = "'seller_detail_'+#id")
     public Object getSellerInfo(Long id) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(String.valueOf(id));
@@ -141,7 +141,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCachePut(domain = "'seller'", key = "'seller_detail_'+#var1")
+    @JobsCachePut(domain = "'seller'", key = "'seller_detail_'+#var1")
     public Object getsCachePutGetShowInfoForDomainByAnnotation(String var1) {
         ShowInfo methodShow = new ShowInfo();
         methodShow.setId(var1);
@@ -150,7 +150,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
     }
 
     @Override
-    @JuqiCacheEvict(domain = "'show'", key = "'show_detail_'+#id")
+    @JobsCacheEvict(domain = "'show'", key = "'show_detail_'+#id")
     public Object deleteShow(String id) {
         return null;
     }
