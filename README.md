@@ -32,8 +32,8 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 spring.cache.type=redis
 
 spring.redis.host=127.0.0.1
-spring.redis.password=dev_redis
-spring.redis.port=6380
+spring.redis.password=123456
+spring.redis.port=6379
 
 spring.redis.pool.max-active=500
 spring.redis.pool.max-idle=500
