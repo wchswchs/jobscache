@@ -23,7 +23,7 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 7. 支持二级关联缓存更新
 8. 当前仅支持Redis(未来会扩展Guava,EHCache,Caffeine等)
 
-##Getting Started
+## Getting Started
 
 ### UnitTest ###
 修改cache.properties
