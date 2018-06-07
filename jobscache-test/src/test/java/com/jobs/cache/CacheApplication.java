@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.PropertySource;
 
 @SpringBootApplication
-@PropertySource("file:/apps/config/cache.properties")
+@PropertySource("classpath:cache.properties")
 public class CacheApplication {
 
     public static void main(String[] args) {

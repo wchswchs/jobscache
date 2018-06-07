@@ -2,7 +2,7 @@ package com.jobs.cache.configuration;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@ConfigurationProperties("juqi.cache")
+@ConfigurationProperties("jobs.cache")
 public class JobsCacheProperties {
 
     private String cacheName = "all";

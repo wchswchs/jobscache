@@ -120,7 +120,7 @@ public class AnnotatedInnerShowCacheService implements CacheService<Object> {
     }
 
     @Override
-    @JobsCacheEvict(domain = "'show'", key = "'show_detail_'+#id")
+    @JobsCacheEvict(domain = "'seller'", key = "'seller_detail_'+#id")
     public Object deleteShow(String id) {
         return null;
     }

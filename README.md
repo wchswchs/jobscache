@@ -23,6 +23,24 @@ key2是hot_shows，缓存热门演出列表，其中id为1的演出也是热门�
 7. 支持二级关联缓存更新
 8. 当前仅支持Redis(未来会扩展Guava,EHCache,Caffeine等)
 
+##Getting Started
+
+### UnitTest ###
+修改cache.properties
+
+```java
+spring.cache.type=redis
+
+spring.redis.host=127.0.0.1
+spring.redis.password=dev_redis
+spring.redis.port=6380
+
+spring.redis.pool.max-active=500
+spring.redis.pool.max-idle=500
+
+jobs.cache.cacheName=test
+```
+
 ## 用法
 
 ### Maven依赖 ###
